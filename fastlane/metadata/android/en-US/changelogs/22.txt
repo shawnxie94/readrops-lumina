@@ -1,0 +1,5 @@
+* Fix unclickable feeds at the bottom of the drawer  on long lists (#301)
+* Fix folders not being updatable when having no feeds for local accounts (#312)
+* Remove AlphaSlider in ColorPickerDialog as alpha colors are not supported by Android color contrast utils (#308)
+* Fix an annoying bug where certain items could not being set read/starred when coming back from the pager
+* Do not display Feedly account type in account selection dialog

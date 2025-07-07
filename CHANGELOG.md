@@ -1,3 +1,11 @@
+# v2.1.1
+
+- Fix unclickable feeds at the bottom of the drawer  on long lists (#301)
+- Fix folders not being updatable when having no feeds for local accounts (#312)
+- Remove AlphaSlider in ColorPickerDialog as alpha colors are not supported by Android color contrast utils (#308)
+- Fix an annoying bug where certain items could not being set read/starred when coming back from the pager
+- Do not display Feedly account type in account selection dialog
+
 # v2.1.0
 
 This release focuses mainly on QOL improvements. You will find among them long time requested features. I hope in the future to be able to deliver new releases in less than six months.
