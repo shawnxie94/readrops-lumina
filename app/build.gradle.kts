@@ -21,8 +21,8 @@ android {
     defaultConfig {
         applicationId = "com.readrops.app"
 
-        versionCode = 21
-        versionName = "2.1.0"
+        versionCode = 22
+        versionName = "2.1.1"
 
         testInstrumentationRunner = "com.readrops.app.ReadropsTestRunner"
     }
