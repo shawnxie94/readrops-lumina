@@ -16,14 +16,23 @@ import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
 import com.readrops.db.entities.ItemState
 import com.readrops.db.entities.ItemStateChange
+import com.readrops.db.entities.Tag
+import com.readrops.db.entities.TagJoin
 import com.readrops.db.entities.account.Account
 import com.readrops.db.entities.account.AccountType
 import com.readrops.db.util.Converters
 
 @Database(
-    entities = [Feed::class, Item::class, Folder::class, Account::class,
-        ItemStateChange::class, ItemState::class],
-    version = 5
+    entities = [Feed::class,
+        Item::class,
+        Folder::class,
+        Account::class,
+        Tag::class,
+        TagJoin::class,
+        ItemStateChange::class,
+        ItemState::class
+    ],
+    version = 6
 )
 @TypeConverters(Converters::class)
 abstract class Database : RoomDatabase() {
