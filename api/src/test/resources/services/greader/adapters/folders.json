@@ -6,6 +6,16 @@
     {
       "id": "user/-/label/Blogs",
       "type": "folder"
+    },
+    {
+      "id": "user/-/label/Test 1",
+      "type": "tag",
+      "unread_count": 0
+    },
+    {
+      "id": "user/-/label/Test 2",
+      "type": "tag",
+      "unread_count": 0
     }
   ]
 }

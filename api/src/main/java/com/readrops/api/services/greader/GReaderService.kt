@@ -1,8 +1,8 @@
 package com.readrops.api.services.greader
 
 import com.readrops.api.services.greader.adapters.FreshRSSUserInfo
+import com.readrops.api.services.greader.adapters.GReaderFoldersTags
 import com.readrops.db.entities.Feed
-import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
@@ -28,7 +28,7 @@ interface GReaderService {
     suspend fun getFeeds(): List<Feed>
 
     @GET("reader/api/0/tag/list?output=json")
-    suspend fun getFolders(): List<Folder>
+    suspend fun getFolders(): GReaderFoldersTags
 
     @GET("reader/api/0/stream/contents/user/-/state/com.google/reading-list")
     suspend fun getItems(

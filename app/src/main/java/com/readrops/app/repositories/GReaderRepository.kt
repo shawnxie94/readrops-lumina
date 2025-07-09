@@ -11,6 +11,7 @@ import com.readrops.db.entities.Feed
 import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
 import com.readrops.db.entities.ItemState
+import com.readrops.db.entities.Tag
 import com.readrops.db.entities.account.Account
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -69,6 +70,7 @@ class GReaderRepository(
         return dataSource.synchronize(syncType, syncData, account.writeToken!!).run {
             insertFolders(folders)
             val newFeeds = insertFeeds(feeds)
+            insertTags(tags)
 
             val newItems = insertItems(items, false)
             insertItems(starredItems, true)
@@ -136,6 +138,10 @@ class GReaderRepository(
     private suspend fun insertFolders(folders: List<Folder>) {
         folders.forEach { it.accountId = account.id }
         database.folderDao().upsertFolders(folders, account)
+    }
+
+    private suspend fun insertTags(tags: List<Tag>) {
+        database.tagDao().insert(tags.map { it.copy(accountId = account.id) })
     }
 
     private suspend fun insertItems(items: List<Item>, starredItems: Boolean): List<Item> {

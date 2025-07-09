@@ -11,6 +11,8 @@ import com.readrops.db.dao.FolderDao
 import com.readrops.db.dao.ItemDao
 import com.readrops.db.dao.ItemStateChangeDao
 import com.readrops.db.dao.ItemStateDao
+import com.readrops.db.dao.TagDao
+import com.readrops.db.dao.TagJoinDao
 import com.readrops.db.entities.Feed
 import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
@@ -48,6 +50,10 @@ abstract class Database : RoomDatabase() {
     abstract fun itemStateDao(): ItemStateDao
 
     abstract fun itemStateChangeDao(): ItemStateChangeDao
+
+    abstract fun tagDao(): TagDao
+
+    abstract fun tagJoinDao(): TagJoinDao
 }
 
 object MigrationFrom1To2 : Migration(1, 2) {

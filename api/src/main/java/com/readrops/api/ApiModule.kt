@@ -15,7 +15,7 @@ import com.readrops.api.services.greader.GReaderDataSource
 import com.readrops.api.services.greader.GReaderService
 import com.readrops.api.services.greader.adapters.FreshRSSUserInfoAdapter
 import com.readrops.api.services.greader.adapters.GReaderFeedsAdapter
-import com.readrops.api.services.greader.adapters.GReaderFoldersAdapter
+import com.readrops.api.services.greader.adapters.GReaderFoldersTagsAdapter
 import com.readrops.api.services.greader.adapters.GReaderItemsAdapter
 import com.readrops.api.services.greader.adapters.GReaderItemsIdsAdapter
 import com.readrops.api.services.nextcloudnews.NextcloudNewsDataSource
@@ -43,7 +43,6 @@ val apiModule = module {
             .readTimeout(1, TimeUnit.MINUTES)
             .addInterceptor(get<AuthInterceptor>())
             .addInterceptor(get<ErrorInterceptor>())
-            //.addInterceptor(NiddlerOkHttpInterceptor(get(), "niddler"))
             .build()
     }
 
@@ -68,12 +67,18 @@ val apiModule = module {
 
     single(named("greaderMoshi")) {
         Moshi.Builder()
-                .add(Types.newParameterizedType(List::class.java, Item::class.java), GReaderItemsAdapter())
-                .add(Types.newParameterizedType(List::class.java, String::class.java), GReaderItemsIdsAdapter())
-                .add(GReaderFeedsAdapter())
-                .add(GReaderFoldersAdapter())
-                .add(FreshRSSUserInfoAdapter())
-                .build()
+            .add(
+                Types.newParameterizedType(List::class.java, Item::class.java),
+                GReaderItemsAdapter()
+            )
+            .add(
+                Types.newParameterizedType(List::class.java, String::class.java),
+                GReaderItemsIdsAdapter()
+            )
+            .add(GReaderFeedsAdapter())
+            .add(GReaderFoldersTagsAdapter())
+            .add(FreshRSSUserInfoAdapter())
+            .build()
     }
 
     //endregion greader/freshrss
@@ -84,19 +89,22 @@ val apiModule = module {
 
     factory { (credentials: Credentials) ->
         Retrofit.Builder()
-                .baseUrl(credentials.url)
-                .client(get())
-                .addConverterFactory(MoshiConverterFactory.create(get(named("nextcloudNewsMoshi"))))
-                .build()
-                .create(NextcloudNewsService::class.java)
+            .baseUrl(credentials.url)
+            .client(get())
+            .addConverterFactory(MoshiConverterFactory.create(get(named("nextcloudNewsMoshi"))))
+            .build()
+            .create(NextcloudNewsService::class.java)
     }
 
     single(named("nextcloudNewsMoshi")) {
         Moshi.Builder()
-                .add(NextcloudNewsFeedsAdapter())
-                .add(NextcloudNewsFoldersAdapter())
-                .add(Types.newParameterizedType(List::class.java, Item::class.java), NextcloudNewsItemsAdapter())
-                .build()
+            .add(NextcloudNewsFeedsAdapter())
+            .add(NextcloudNewsFoldersAdapter())
+            .add(
+                Types.newParameterizedType(List::class.java, Item::class.java),
+                NextcloudNewsItemsAdapter()
+            )
+            .build()
     }
 
     //endregion nextcloud news
@@ -107,22 +115,22 @@ val apiModule = module {
 
     factory { (credentials: Credentials) ->
         Retrofit.Builder()
-                .baseUrl(credentials.url)
-                .client(get())
-                .addConverterFactory(MoshiConverterFactory.create(get(named("feverMoshi"))))
-                .build()
-                .create(FeverService::class.java)
+            .baseUrl(credentials.url)
+            .client(get())
+            .addConverterFactory(MoshiConverterFactory.create(get(named("feverMoshi"))))
+            .build()
+            .create(FeverService::class.java)
     }
 
     single(named("feverMoshi")) {
         Moshi.Builder()
-                .add(FeverFoldersAdapter())
-                .add(FeverFeeds::class.java, FeverFeedsAdapter())
-                .add(FeverItemsAdapter())
-                .add(FeverFaviconsAdapter())
-                .add(Boolean::class.java, FeverAPIAdapter())
-                .add(FeverItemsIdsAdapter())
-                .build()
+            .add(FeverFoldersAdapter())
+            .add(FeverFeeds::class.java, FeverFeedsAdapter())
+            .add(FeverItemsAdapter())
+            .add(FeverFaviconsAdapter())
+            .add(Boolean::class.java, FeverAPIAdapter())
+            .add(FeverItemsIdsAdapter())
+            .build()
     }
 
     //endregion Fever

@@ -3,6 +3,7 @@ package com.readrops.api.services
 import com.readrops.db.entities.Feed
 import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 
 data class DataSourceResult(
     var items: List<Item> = mutableListOf(),
@@ -12,4 +13,5 @@ data class DataSourceResult(
     var unreadIds: List<String> = listOf(),
     var readIds: List<String> = listOf(),
     var starredIds: List<String> = listOf(),
+    var tags: List<Tag> = listOf()
 )

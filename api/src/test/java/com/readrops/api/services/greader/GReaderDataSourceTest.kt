@@ -101,7 +101,7 @@ class GReaderDataSourceTest : KoinTest {
         val stream = TestUtils.loadResource("services/greader/adapters/folders.json")
         mockServer.enqueueOKStream(stream)
 
-        val folders = freshRSSDataSource.getFolders()
+        val (folders) = freshRSSDataSource.getFolders()
         assertTrue { folders.size == 1 }
     }
 

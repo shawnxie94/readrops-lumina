@@ -4,10 +4,10 @@ import com.readrops.api.services.DataSourceResult
 import com.readrops.api.services.SyncType
 import com.readrops.api.services.greader.adapters.FreshRSSUserInfo
 import com.readrops.db.entities.Item
-import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.withContext
 import okhttp3.MultipartBody
 import java.io.StringReader
 import java.util.Properties
@@ -38,11 +38,15 @@ class GReaderDataSource(private val service: GReaderService) {
         syncType: SyncType,
         syncData: GReaderSyncData,
         writeToken: String
-    ): DataSourceResult = with(CoroutineScope(Dispatchers.IO)) {
-        return if (syncType == SyncType.INITIAL_SYNC) {
+    ): DataSourceResult = withContext(Dispatchers.IO) {
+        if (syncType == SyncType.INITIAL_SYNC) {
             DataSourceResult().apply {
                 awaitAll(
-                    async { folders = getFolders() },
+                    async {
+                        val folderTags = getFolders()
+                        folders = folderTags.folders
+                        tags = folderTags.tags
+                    },
                     async { feeds = getFeeds() },
                     async {
                         items = getItems(listOf(GOOGLE_READ, GOOGLE_STARRED), MAX_ITEMS, null)
@@ -51,7 +55,6 @@ class GReaderDataSource(private val service: GReaderService) {
                     async { unreadIds = getItemsIds(GOOGLE_READ, GOOGLE_READING_LIST, MAX_ITEMS) },
                     async { starredIds = getItemsIds(null, GOOGLE_STARRED, MAX_STARRED_ITEMS) }
                 )
-
             }
         } else {
             DataSourceResult().apply {
@@ -61,7 +64,11 @@ class GReaderDataSource(private val service: GReaderService) {
                 )
 
                 awaitAll(
-                    async { folders = getFolders() },
+                    async {
+                        val folderTags = getFolders()
+                        folders = folderTags.folders
+                        tags = folderTags.tags
+                    },
                     async { feeds = getFeeds() },
                     async { items = getItems(null, MAX_ITEMS, syncData.lastModified) },
                     async { unreadIds = getItemsIds(GOOGLE_READ, GOOGLE_READING_LIST, MAX_ITEMS) },
