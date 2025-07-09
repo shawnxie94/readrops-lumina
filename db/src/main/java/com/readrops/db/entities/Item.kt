@@ -33,6 +33,7 @@ data class Item(
     @ColumnInfo(name = "starred") var isStarred: Boolean = false,
     @ColumnInfo(name = "remote_id") var remoteId: String? = null,
     @Ignore var feedRemoteId: String? = null,
+    @Ignore var tags: List<Tag> = listOf()
 ) : Comparable<Item> {
 
     val text

@@ -6,6 +6,7 @@ import com.readrops.api.utils.exceptions.ParseException
 import com.readrops.api.utils.extensions.nextNonEmptyString
 import com.readrops.api.utils.extensions.nextNullableString
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -104,14 +105,30 @@ class GReaderItemsAdapter : JsonAdapter<List<Item>>() {
     }
 
     private fun getStates(reader: JsonReader, item: Item) = with(reader) {
+        val tags = mutableListOf<Tag>()
         beginArray()
 
         while (hasNext()) {
-            when (nextString()) {
-                GOOGLE_READ -> item.isRead = true
-                GOOGLE_STARRED -> item.isStarred = true
+            val value = nextString()
+
+            with(value) {
+                when {
+                    equals(GOOGLE_READ) -> item.isRead = true
+                    equals(GOOGLE_STARRED) -> item.isStarred = true
+                    // might also contain a folder, filtering is needed
+                    contains("user/-/label/") -> {
+                        val tag = Tag(
+                            name = value.removePrefix("user/-/label/"),
+                            remoteId = value
+                        )
+
+                        tags += tag
+                    }
+                }
             }
         }
+
+        item.tags = tags
 
         endArray()
     }

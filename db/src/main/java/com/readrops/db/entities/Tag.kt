@@ -23,6 +23,7 @@ import com.readrops.db.entities.account.Account
 data class Tag(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val name: String,
+    @ColumnInfo(name = "remote_id") val remoteId: String,
     @ColumnInfo(name = "account_id", index = true) val accountId: Int = 0,
 )
 
@@ -41,7 +42,7 @@ data class Tag(
     ]
 )
 data class TagJoin(
-    @PrimaryKey(autoGenerate = true) val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int = 0,
     @ColumnInfo(name = "tag_id", index = true) val tagId: Int,
     @ColumnInfo(name = "item_id", index = true) val itemId: Int
 )

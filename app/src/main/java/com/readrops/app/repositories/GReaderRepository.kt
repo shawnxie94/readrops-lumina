@@ -12,6 +12,7 @@ import com.readrops.db.entities.Folder
 import com.readrops.db.entities.Item
 import com.readrops.db.entities.ItemState
 import com.readrops.db.entities.Tag
+import com.readrops.db.entities.TagJoin
 import com.readrops.db.entities.account.Account
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
@@ -70,10 +71,12 @@ class GReaderRepository(
         return dataSource.synchronize(syncType, syncData, account.writeToken!!).run {
             insertFolders(folders)
             val newFeeds = insertFeeds(feeds)
-            insertTags(tags)
+            val tags = insertTags(tags)
 
             val newItems = insertItems(items, false)
             insertItems(starredItems, true)
+
+            insertItemsTags(newItems, tags)
 
             insertItemsIds(unreadIds, readIds, starredIds.toMutableList())
 
@@ -140,8 +143,9 @@ class GReaderRepository(
         database.folderDao().upsertFolders(folders, account)
     }
 
-    private suspend fun insertTags(tags: List<Tag>) {
+    private suspend fun insertTags(tags: List<Tag>): List<Tag> {
         database.tagDao().insert(tags.map { it.copy(accountId = account.id) })
+        return database.tagDao().selectAll(account.id)
     }
 
     private suspend fun insertItems(items: List<Item>, starredItems: Boolean): List<Item> {
@@ -183,6 +187,24 @@ class GReaderRepository(
         }
 
         return newItems
+    }
+
+    private suspend fun insertItemsTags(newItems: List<Item>, allTags: List<Tag>) {
+        newItems.associate { it to it.tags }
+            .map { (item, tags) ->
+                tags
+                    .filter { tag -> allTags.any { tag.remoteId == it.remoteId } }
+                    .map { tag ->
+                        TagJoin(
+                            itemId = item.id,
+                            tagId = allTags.first { tag.remoteId == it.remoteId }.id,
+                        )
+                    }
+            }
+            .flatten()
+            .run {
+                database.tagJoinDao().insert(this)
+            }
     }
 
     private suspend fun insertItemsIds(

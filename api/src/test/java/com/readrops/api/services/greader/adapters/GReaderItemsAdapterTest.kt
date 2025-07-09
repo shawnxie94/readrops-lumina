@@ -32,6 +32,9 @@ class GReaderItemsAdapterTest {
             assertEquals(pubDate, DateUtils.fromEpochSeconds(1625234040))
             assertEquals(isRead, false)
             assertEquals(isStarred, false)
+
+            assertEquals(1, tags.size)
+            assertEquals("Libre", tags.first().name)
         }
 
         with(items[1]) {

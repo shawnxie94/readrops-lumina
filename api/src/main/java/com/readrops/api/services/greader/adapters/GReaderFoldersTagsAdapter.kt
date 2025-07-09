@@ -95,7 +95,8 @@ class GReaderFoldersTagsAdapter {
 
             "tag" -> {
                 tags += Tag(
-                    name = name
+                    name = name,
+                    remoteId = remoteId!!
                 )
             }
         }
