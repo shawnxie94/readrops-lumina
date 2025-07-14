@@ -2,7 +2,7 @@
   "formatVersion": 1,
   "database": {
     "version": 6,
-    "identityHash": "93177df58b7d5e26f8cb1862c79834e1",
+    "identityHash": "a7510157ca821655f8b155517db6c780",
     "entities": [
       {
         "tableName": "Feed",
@@ -460,7 +460,7 @@
       },
       {
         "tableName": "TagJoin",
-        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tag_id` INTEGER NOT NULL, `item_id` INTEGER NOT NULL, FOREIGN KEY(`item_id`) REFERENCES `Item`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`tag_id`) REFERENCES `Tag`(`id`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`id` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `tag_id` INTEGER NOT NULL, `item_id` INTEGER NOT NULL, FOREIGN KEY(`item_id`) REFERENCES `Item`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE , FOREIGN KEY(`tag_id`) REFERENCES `Tag`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )",
         "fields": [
           {
             "fieldPath": "id",
@@ -510,7 +510,7 @@
         "foreignKeys": [
           {
             "table": "Item",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "item_id"
@@ -521,7 +521,7 @@
           },
           {
             "table": "Tag",
-            "onDelete": "NO ACTION",
+            "onDelete": "CASCADE",
             "onUpdate": "NO ACTION",
             "columns": [
               "tag_id"
@@ -651,7 +651,7 @@
     ],
     "setupQueries": [
       "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
-      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '93177df58b7d5e26f8cb1862c79834e1')"
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'a7510157ca821655f8b155517db6c780')"
     ]
   }
 }

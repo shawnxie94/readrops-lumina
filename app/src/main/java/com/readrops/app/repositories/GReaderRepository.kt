@@ -144,8 +144,7 @@ class GReaderRepository(
     }
 
     private suspend fun insertTags(tags: List<Tag>): List<Tag> {
-        database.tagDao().insert(tags.map { it.copy(accountId = account.id) })
-        return database.tagDao().selectAll(account.id)
+        return database.tagDao().upsertTags(tags.map { it.copy(accountId = account.id) }, account)
     }
 
     private suspend fun insertItems(items: List<Item>, starredItems: Boolean): List<Item> {

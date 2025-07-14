@@ -32,12 +32,14 @@ data class Tag(
         ForeignKey(
             entity = Item::class,
             parentColumns = ["id"],
-            childColumns = ["item_id"]
+            childColumns = ["item_id"],
+            onDelete = ForeignKey.CASCADE,
         ),
         ForeignKey(
             entity = Tag::class,
             parentColumns = ["id"],
-            childColumns = ["tag_id"]
+            childColumns = ["tag_id"],
+            onDelete = ForeignKey.CASCADE
         )
     ]
 )
