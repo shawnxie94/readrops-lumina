@@ -1,6 +1,8 @@
 package com.readrops.db.dao
 
 import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
 import com.readrops.db.entities.Tag
@@ -8,6 +10,9 @@ import com.readrops.db.entities.account.Account
 
 @Dao
 interface TagDao : BaseDao<Tag> {
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertConflict(tags: List<Tag>)
 
     @Query("Select * From Tag Where account_id = :accountId")
     suspend fun selectAll(accountId: Int): List<Tag>
@@ -40,7 +45,7 @@ interface TagDao : BaseDao<Tag> {
             localTagIds.filter { localTagId -> tags.none { tag -> localTagId == tag.remoteId } }
 
         for (tag in tags) {
-            updateTagName(tag.name, tag.remoteId, tag.accountId)
+            updateTagName(tag.name, tag.remoteId!!, tag.accountId)
         }
 
         if (tagsToDelete.isNotEmpty()) {

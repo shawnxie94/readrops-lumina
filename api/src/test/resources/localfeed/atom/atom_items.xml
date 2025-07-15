@@ -22,6 +22,9 @@
         <content type="html">
             &lt;pre style=&#39;white-space:pre-wrap;width:81ex&#39;&gt;Add an option to open item url in custom tab&lt;/pre&gt;
         </content>
+        <category term="category 1"/>
+        <category term="category 2"/>
+        <category term="category 3"/>
     </entry>
     <entry>
         <id>tag:github.com,2008:Grit::Commit/e0945823eecf269e5beea646ac5d7e630e08afbf</id>

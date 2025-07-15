@@ -190,7 +190,7 @@ class GReaderRepository(
 
     private suspend fun insertItemsTags(newItems: List<Item>, allTags: List<Tag>) {
         newItems.associate { it to it.tags }
-            .map { (item, tags) ->
+            .flatMap { (item, tags) ->
                 tags
                     .filter { tag -> allTags.any { tag.remoteId == it.remoteId } }
                     .map { tag ->
@@ -200,7 +200,6 @@ class GReaderRepository(
                         )
                     }
             }
-            .flatten()
             .run {
                 database.tagJoinDao().insert(this)
             }

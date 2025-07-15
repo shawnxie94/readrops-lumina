@@ -38,6 +38,7 @@ class ATOMAdapterTest {
             assertEquals(description, "Summary")
             assertEquals(remoteId, "tag:github.com,2008:Grit::Commit/c15f093a1bc4211e85f8d1817c9073e307afe5ac")
             TestCase.assertNotNull(content)
+            assertEquals(3, tags.size)
         }
     }
 

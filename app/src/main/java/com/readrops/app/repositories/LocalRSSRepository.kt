@@ -9,6 +9,8 @@ import com.readrops.app.util.Utils
 import com.readrops.db.Database
 import com.readrops.db.entities.Feed
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
+import com.readrops.db.entities.TagJoin
 import com.readrops.db.entities.account.Account
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +32,8 @@ class LocalRSSRepository(
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : BaseRepository(database, account), KoinComponent {
 
-    override suspend fun login(account: Account) { /* useless here */ }
+    override suspend fun login(account: Account) { /* useless here */
+    }
 
     override suspend fun synchronize(
         selectedFeeds: List<Feed>,
@@ -60,7 +63,19 @@ class LocalRSSRepository(
                         try {
                             val pair = dataSource.queryRSSResource(feed.url!!, headers.build())
 
-                            pair?.let { newItems.addAll(insertNewItems(it.second, feed)) }
+                            pair?.let { (_, pairItems) ->
+                                val itemsTags = pairItems.flatMap { it.tags }
+                                    .distinct()
+                                val allTags = insertTags(itemsTags)
+
+                                val pairNewItems = insertNewItems(pairItems, feed)
+
+                                if (itemsTags.isNotEmpty()) {
+                                    insertItemsTags(pairNewItems, allTags)
+                                }
+
+                                newItems.addAll(pairNewItems)
+                            }
                         } catch (e: Exception) {
                             errors[feed] = e
                         }
@@ -104,6 +119,26 @@ class LocalRSSRepository(
             }
 
         errors
+    }
+
+    private suspend fun insertTags(tags: List<Tag>): List<Tag> {
+        database.tagDao().insertConflict(tags.map { it.copy(accountId = account.id) })
+        return database.tagDao().selectAll(account.id)
+    }
+
+    private suspend fun insertItemsTags(newItems: List<Item>, allTags: List<Tag>) {
+        newItems.associate { it to it.tags }
+            .flatMap { (item, tags) ->
+                tags.map { tag ->
+                    TagJoin(
+                        itemId = item.id,
+                        tagId = allTags.first { tag.name == it.name }.id,
+                    )
+                }
+            }
+            .run {
+                database.tagJoinDao().insertConflict(this)
+            }
     }
 
     private suspend fun insertNewItems(items: List<Item>, feed: Feed): List<Item> {

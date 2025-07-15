@@ -12,6 +12,7 @@ import com.readrops.api.utils.extensions.nonNullText
 import com.readrops.api.utils.extensions.nullableText
 import com.readrops.api.utils.extensions.nullableTextRecursively
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
 import java.time.LocalDateTime
 
@@ -21,6 +22,7 @@ class RSS2ItemAdapter : XmlAdapter<Item> {
         val item = Item()
 
         val creators = arrayListOf<String?>()
+        val tags = arrayListOf<Tag>()
 
         return item.apply {
             konsumer.allChildrenAutoIgnore(names) {
@@ -37,9 +39,17 @@ class RSS2ItemAdapter : XmlAdapter<Item> {
                     "enclosure" -> RSSMedia.parseMediaContent(this, item = this@apply)
                     "media:content" -> RSSMedia.parseMediaContent(this, item = this@apply)
                     "media:group" -> RSSMedia.parseMediaGroup(this, item = this@apply)
+                    "category" -> {
+                        nullableText()?.let {
+                            tags += Tag(name = it)
+                        }
+                    }
+
                     else -> skipContents() // for example media:description
                 }
             }
+
+            this.tags = tags
             finalizeItem(this, creators)
         }
     }
@@ -63,7 +73,7 @@ class RSS2ItemAdapter : XmlAdapter<Item> {
     companion object {
         val names = Names.of(
             "title", "link", "author", "creator", "pubDate", "date",
-            "guid", "description", "encoded", "enclosure", "content", "group"
+            "guid", "description", "encoded", "enclosure", "content", "group", "category"
         )
     }
 }

@@ -10,6 +10,7 @@ import com.readrops.api.utils.extensions.nonNullText
 import com.readrops.api.utils.extensions.nullableText
 import com.readrops.api.utils.extensions.nullableTextRecursively
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
 import java.time.LocalDateTime
 
@@ -17,6 +18,7 @@ class RSS1ItemAdapter : XmlAdapter<Item> {
 
     override fun fromXml(konsumer: Konsumer): Item {
         val item = Item()
+        val tags = arrayListOf<Tag>()
 
         val authors = arrayListOf<String?>()
         val about = konsumer.attributes.getValueOrNull(
@@ -33,10 +35,17 @@ class RSS1ItemAdapter : XmlAdapter<Item> {
                     "dc:creator" -> authors += nullableText()
                     "description" -> description = nullableTextRecursively()
                     "content:encoded" -> content = nullableTextRecursively()
+                    "dc:subject" -> {
+                        nullableText()?.let {
+                            tags += Tag(name = it)
+                        }
+                    }
+
                     else -> skipContents()
                 }
             }
 
+            this.tags = tags
             validateItem(this)
 
             if (pubDate == null) pubDate = LocalDateTime.now()
@@ -54,6 +63,7 @@ class RSS1ItemAdapter : XmlAdapter<Item> {
     }
 
     companion object {
-        val names = Names.of("title", "description", "date", "link", "creator", "encoded")
+        val names =
+            Names.of("title", "description", "date", "link", "creator", "encoded", "subject")
     }
 }

@@ -38,6 +38,7 @@ class RSS2AdapterTest {
             assertEquals(author, "Author 1")
             assertEquals(description, "<a href=\"https://news.ycombinator.com/item?id=24273602\">Comments</a>")
             assertEquals(remoteId, "https://www.bbc.com/news/world-africa-53887947")
+            assertEquals(3, tags.size)
         }
     }
 

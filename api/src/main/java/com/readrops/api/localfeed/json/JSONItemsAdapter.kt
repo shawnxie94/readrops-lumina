@@ -5,6 +5,7 @@ import com.readrops.api.utils.exceptions.ParseException
 import com.readrops.api.utils.extensions.nextNonEmptyString
 import com.readrops.api.utils.extensions.nextNullableString
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
 import com.squareup.moshi.JsonAdapter
 import com.squareup.moshi.JsonReader
@@ -42,6 +43,7 @@ class JSONItemsAdapter : JsonAdapter<List<Item>>() {
                         7 -> pubDate = DateUtils.parse(nextNullableString())
                         8 -> author = parseAuthor(reader) // jsonfeed 1.0
                         9 -> author = parseAuthors(reader) // jsonfeed 1.1
+                        10 -> tags = parseTags(reader)
                         else -> skipValue()
                     }
                 }
@@ -88,6 +90,22 @@ class JSONItemsAdapter : JsonAdapter<List<Item>>() {
             authors.filterNotNull().joinToString(limit = AUTHORS_MAX) else null
     }
 
+    private fun parseTags(reader: JsonReader): List<Tag> = with(reader) {
+        val tags = arrayListOf<Tag>()
+        beginArray()
+
+        while (hasNext()) {
+            val name = nextNullableString()
+
+            if (!name.isNullOrEmpty()) {
+                tags += Tag(name = name)
+            }
+        }
+
+        endArray()
+        tags
+    }
+
     private fun validateItem(item: Item): Boolean = when {
         item.title == null -> throw ParseException("Item title is required")
         item.link == null -> throw ParseException("Item link is required")
@@ -95,7 +113,18 @@ class JSONItemsAdapter : JsonAdapter<List<Item>>() {
     }
 
     companion object {
-        val names: JsonReader.Options = JsonReader.Options.of("id", "url", "title",
-                "content_html", "content_text", "summary", "image", "date_published", "author", "authors")
+        val names: JsonReader.Options = JsonReader.Options.of(
+            "id",
+            "url",
+            "title",
+            "content_html",
+            "content_text",
+            "summary",
+            "image",
+            "date_published",
+            "author",
+            "authors",
+            "tags"
+        )
     }
 }

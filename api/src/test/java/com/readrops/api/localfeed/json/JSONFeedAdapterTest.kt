@@ -47,6 +47,8 @@ class JSONFeedAdapterTest {
             assertEquals(pubDate, DateUtils.parse("2017-09-25T14:27:27-07:00"))
             assertEquals(author, "Author 1")
             TestCase.assertNotNull(content)
+
+            assertEquals(3, tags.size)
         }
 
     }

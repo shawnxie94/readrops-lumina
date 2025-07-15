@@ -42,6 +42,7 @@ class RSS1AdapterTest {
             assertEquals(author, "msmash")
             assertNotNull(description)
             assertEquals(content, "content:encoded")
+            assertEquals(1, tags.size)
         }
     }
 

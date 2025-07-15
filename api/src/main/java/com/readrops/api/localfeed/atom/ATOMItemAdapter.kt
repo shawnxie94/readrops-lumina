@@ -10,6 +10,7 @@ import com.readrops.api.utils.extensions.nonNullText
 import com.readrops.api.utils.extensions.nullableText
 import com.readrops.api.utils.extensions.nullableTextRecursively
 import com.readrops.db.entities.Item
+import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
 import java.time.LocalDateTime
 
@@ -17,6 +18,7 @@ class ATOMItemAdapter : XmlAdapter<Item> {
 
     override fun fromXml(konsumer: Konsumer): Item {
         val item = Item()
+        val tags = arrayListOf<Tag>()
 
         return item.apply {
             konsumer.allChildrenAutoIgnore(names) {
@@ -36,9 +38,17 @@ class ATOMItemAdapter : XmlAdapter<Item> {
                     "summary" -> description = nullableTextRecursively()
                     "content" -> content = nullableTextRecursively()
                     "media:group" -> RSSMedia.parseMediaGroup(this, item)
+                    "category" -> {
+                        attributes.getValueOrNull("term")?.let {
+                            tags += Tag(name = it)
+                        }
+                    }
+
                     else -> skipContents()
                 }
             }
+
+            this.tags = tags
 
             validateItem(this)
             if (pubDate == null) pubDate = LocalDateTime.now()
@@ -61,7 +71,7 @@ class ATOMItemAdapter : XmlAdapter<Item> {
     companion object {
         val names = Names.of(
             "title", "id", "updated", "link", "author", "summary",
-            "content", "group", "published"
+            "content", "group", "published", "category"
         )
     }
 }

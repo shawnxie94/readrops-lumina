@@ -19,6 +19,9 @@
          <author>Author 1</author>
          <description><![CDATA[<a href="https://news.ycombinator.com/item?id=24273602">Comments</a>]]></description>
          <media:description>media description</media:description>
+         <category>category 1</category>
+         <category>category 2</category>
+         <category>category 3</category>
       </item>
       <item>
          <title>Palantir S-1</title>
