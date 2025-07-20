@@ -176,6 +176,8 @@ class ItemScreenModel(
             .flow
             .map {
                 it.map { itemWithFeed ->
+                    itemWithFeed.item.tags = database.tagDao().selectAllByItem(itemWithFeed.item.id)
+
                     val stateChange = state.value.stateChanges
                         .firstOrNull { stateChange -> stateChange.itemId == itemWithFeed.item.id }
 
@@ -190,7 +192,7 @@ class ItemScreenModel(
                                 !itemWithFeed.isStarred
                             } else {
                                 itemWithFeed.isStarred
-                            }
+                            },
                         )
                     } else {
                         itemWithFeed

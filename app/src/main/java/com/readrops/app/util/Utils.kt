@@ -58,4 +58,12 @@ object Utils {
             context.startActivity(Intent.createChooser(it, null))
         }
     }
+
+    fun truncateString(text: String, max: Int): String {
+        return if (text.length > max) {
+            text.substring(0, max) + "..."
+        } else {
+            text
+        }
+    }
 }

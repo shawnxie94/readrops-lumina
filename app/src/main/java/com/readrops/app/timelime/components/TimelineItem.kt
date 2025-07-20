@@ -27,6 +27,7 @@ import com.readrops.app.util.theme.ReadropsTheme
 import com.readrops.app.util.theme.spacing
 import com.readrops.db.entities.Folder
 import com.readrops.db.entities.OpenIn
+import com.readrops.db.entities.Tag
 import com.readrops.db.pojo.ItemWithFeed
 import java.time.LocalDateTime
 
@@ -205,7 +206,18 @@ val itemWithFeed = ItemWithFeed(
                          at finibus elit libero at mi. Etiam hendrerit sapien eu porta feugiat. Duis porttitor"""
             .replace("\n", "")
             .trimMargin(),
-        imageLink = ""
+        imageLink = "",
+        tags = listOf(
+            Tag(name = "Tag 1"),
+            Tag(name = "Tag 2"),
+            Tag(name = "Tag 3"),
+            Tag(name = "Tag 4"),
+            Tag(name = "Tag 5"),
+            Tag(name = "Tag 6"),
+            Tag(name = "Tag 7"),
+            Tag(name = "Tag 8"),
+            Tag(name = "Tag 9")
+        )
     ),
     feedName = "feed name",
     color = 0,
@@ -214,7 +226,7 @@ val itemWithFeed = ItemWithFeed(
     websiteUrl = "",
     folder = Folder(name = "Folder name"),
     openIn = OpenIn.LOCAL_VIEW,
-    openInAsk = true
+    openInAsk = true,
 )
 
 @DefaultPreview

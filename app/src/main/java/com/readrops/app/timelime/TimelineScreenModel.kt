@@ -6,6 +6,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import androidx.paging.map
 import androidx.work.workDataOf
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.readrops.app.R
@@ -49,6 +50,7 @@ import kotlinx.coroutines.flow.emptyFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -191,7 +193,15 @@ class TimelineScreenModel(
             pagingSourceFactory = {
                 database.itemDao().selectAll(query)
             },
-        ).flow
+        )
+            .flow
+            .map { pagingData ->
+                pagingData.map { itemWithFeed ->
+                    itemWithFeed.item.tags = database.tagDao().selectAllByItem(itemWithFeed.item.id)
+
+                    itemWithFeed
+                }
+            }
             .cachedIn(screenModelScope)
 
         _timelineState.update {

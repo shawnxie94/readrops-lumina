@@ -1,6 +1,8 @@
 package com.readrops.app.item.components
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
@@ -22,6 +24,7 @@ import com.readrops.app.util.DefaultPreview
 import com.readrops.app.util.components.FeedIcon
 import com.readrops.app.util.components.IconText
 import com.readrops.app.util.extensions.displayColor
+import com.readrops.app.util.theme.MediumSpacer
 import com.readrops.app.util.theme.ReadropsTheme
 import com.readrops.app.util.theme.ShortSpacer
 import com.readrops.app.util.theme.spacing
@@ -38,6 +41,7 @@ fun SimpleTitle(
 ) {
     val item = itemWithFeed.item
     val spacing = MaterialTheme.spacing.mediumSpacing
+    val accentColor = itemWithFeed.displayColor(MaterialTheme.colorScheme.background.toArgb())
 
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -100,6 +104,26 @@ fun SimpleTitle(
             style = MaterialTheme.typography.labelMedium,
             color = onBackgroundColor
         )
+
+        if (itemWithFeed.item.tags.isNotEmpty()) {
+            MediumSpacer()
+
+            FlowRow(
+                horizontalArrangement = Arrangement.spacedBy(
+                    MaterialTheme.spacing.shortSpacing,
+                    Alignment.CenterHorizontally
+                ),
+                verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.shortSpacing)
+            ) {
+                for (tag in itemWithFeed.item.tags) {
+                    TagSurface(
+                        name = tag.name,
+                        backgroundColor = accentColor
+                    )
+
+                }
+            }
+        }
     }
 }
 

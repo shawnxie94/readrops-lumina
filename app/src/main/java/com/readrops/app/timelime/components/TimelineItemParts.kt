@@ -2,6 +2,7 @@ package com.readrops.app.timelime.components
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
@@ -38,6 +39,7 @@ import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.readrops.app.R
+import com.readrops.app.item.components.TagSurface
 import com.readrops.app.util.components.FeedIcon
 import com.readrops.app.util.extensions.canDisplayOnBackground
 import com.readrops.app.util.extensions.displayColor
@@ -210,6 +212,26 @@ fun LargeTimelineItem(
                             maxLines = 3,
                             overflow = TextOverflow.Ellipsis,
                         )
+                    }
+
+                    if (itemWithFeed.item.tags.isNotEmpty()) {
+                        ShortSpacer()
+
+                        FlowRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            maxLines = 2,
+                            horizontalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.shortSpacing),
+                            verticalArrangement = Arrangement.spacedBy(MaterialTheme.spacing.shortSpacing)
+                        ) {
+                            for (tag in itemWithFeed.item.tags) {
+                                TagSurface(
+                                    name = tag.name,
+                                    backgroundColor = displayColor,
+                                    truncateName = true
+                                )
+                            }
+                        }
+
                     }
                 }
 
