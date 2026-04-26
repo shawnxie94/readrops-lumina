@@ -18,6 +18,14 @@ import com.readrops.api.services.greader.adapters.GReaderFeedsAdapter
 import com.readrops.api.services.greader.adapters.GReaderFoldersTagsAdapter
 import com.readrops.api.services.greader.adapters.GReaderItemsAdapter
 import com.readrops.api.services.greader.adapters.GReaderItemsIdsAdapter
+import com.readrops.api.services.lumina.LuminaDataSource
+import com.readrops.api.services.lumina.LuminaCreateArticleRequest
+import com.readrops.api.services.lumina.LuminaReportUrlRequest
+import com.readrops.api.services.lumina.LuminaReportUrlResponse
+import com.readrops.api.services.lumina.LuminaService
+import com.readrops.api.services.lumina.adapters.LuminaCreateArticleRequestAdapter
+import com.readrops.api.services.lumina.adapters.LuminaReportUrlRequestAdapter
+import com.readrops.api.services.lumina.adapters.LuminaReportUrlResponseAdapter
 import com.readrops.api.services.nextcloudnews.NextcloudNewsDataSource
 import com.readrops.api.services.nextcloudnews.NextcloudNewsService
 import com.readrops.api.services.nextcloudnews.adapters.NextcloudNewsFeedsAdapter
@@ -51,6 +59,37 @@ val apiModule = module {
     single { ErrorInterceptor() }
 
     single { LocalRSSDataSource(get()) }
+
+    //region Lumina
+
+    single(named("luminaOkHttpClient")) {
+        OkHttpClient.Builder()
+            .callTimeout(1, TimeUnit.MINUTES)
+            .readTimeout(1, TimeUnit.MINUTES)
+            .addInterceptor(get<ErrorInterceptor>())
+            .build()
+    }
+
+    single(named("luminaMoshi")) {
+        Moshi.Builder()
+            .add(LuminaCreateArticleRequest::class.java, LuminaCreateArticleRequestAdapter())
+            .add(LuminaReportUrlRequest::class.java, LuminaReportUrlRequestAdapter())
+            .add(LuminaReportUrlResponse::class.java, LuminaReportUrlResponseAdapter())
+            .build()
+    }
+
+    factory { params -> LuminaDataSource(get(parameters = { params })) }
+
+    factory { (baseUrl: String) ->
+        Retrofit.Builder()
+            .baseUrl(LuminaDataSource.normalizeBaseUrl(baseUrl))
+            .client(get(named("luminaOkHttpClient")))
+            .addConverterFactory(MoshiConverterFactory.create(get(named("luminaMoshi"))))
+            .build()
+            .create(LuminaService::class.java)
+    }
+
+    //endregion Lumina
 
     //region greader/freshrss
 

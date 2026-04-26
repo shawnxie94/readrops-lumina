@@ -37,6 +37,7 @@ import com.readrops.app.R
 import com.readrops.app.more.preferences.components.BasePreference
 import com.readrops.app.more.preferences.components.CustomShareIntentTextWidget
 import com.readrops.app.more.preferences.components.ListPreferenceWidget
+import com.readrops.app.more.preferences.components.LuminaSettingsWidget
 import com.readrops.app.more.preferences.components.PreferenceHeader
 import com.readrops.app.more.preferences.components.SwitchPreferenceWidget
 import com.readrops.app.sync.SyncWorker
@@ -237,6 +238,16 @@ class PreferencesScreen : AndroidScreen() {
                                 onValueChange = {}
                             )
 
+                            BasePreference(
+                                title = stringResource(R.string.lumina),
+                                subtitle = if (loadedState.luminaApiUrl.isBlank()) {
+                                    stringResource(R.string.lumina_not_configured)
+                                } else {
+                                    loadedState.luminaApiUrl
+                                },
+                                onClick = { screenModel.updateLuminaDialog(true) }
+                            )
+
                             SwitchPreferenceWidget(
                                 preference = loadedState.useCustomShareIntentTpl.second,
                                 isChecked = loadedState.useCustomShareIntentTpl.first,
@@ -252,6 +263,16 @@ class PreferencesScreen : AndroidScreen() {
                                     onDismiss = { screenModel.updateDialog(false) },
                                 )
                             }
+
+                            if (loadedState.showLuminaDialog) {
+                                LuminaSettingsWidget(
+                                    apiUrl = loadedState.luminaApiUrl,
+                                    internalToken = loadedState.luminaInternalToken,
+                                    skipAiProcessing = loadedState.luminaSkipAiProcessing,
+                                    onDismiss = { screenModel.updateLuminaDialog(false) },
+                                    onSave = screenModel::saveLuminaSettings
+                                )
+                            }
                         }
                     }
                 }
@@ -259,4 +280,3 @@ class PreferencesScreen : AndroidScreen() {
         }
     }
 }
-

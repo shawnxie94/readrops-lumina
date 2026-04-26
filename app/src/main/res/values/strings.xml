@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Readrops</string>
+    <string name="app_name" translatable="false">ReadropsForLumina</string>
     <string name="add_feed">Add feed</string>
     <string name="settings">Settings</string>
     <string name="add_feed_title">Add feed</string>
@@ -15,6 +15,24 @@
     <string name="read_time_one_minute">1 min</string> <!-- To check -->
     <string name="interpoint" translatable="false">·</string>
     <string name="share_article">Share Article</string>
+    <string name="share_to_other_apps">Share to other apps</string>
+    <string name="sync_to_lumina">Sync to Lumina</string>
+    <string name="synced_to_lumina">Synced to Lumina</string>
+    <string name="already_exists_in_lumina">Already exists in Lumina</string>
+    <string name="lumina_not_configured">Lumina is not configured</string>
+    <string name="lumina_sync_failed">Lumina sync failed: %1$s</string>
+    <string name="lumina">Lumina</string>
+    <string name="lumina_settings_summary">Configure the Lumina host URL and internal token.</string>
+    <string name="lumina_api_url">Lumina host URL</string>
+    <string name="lumina_internal_token">Internal token</string>
+    <string name="lumina_skip_ai_processing">Skip AI processing</string>
+    <string name="lumina_no_link_found">No link found</string>
+    <string name="lumina_syncing">Syncing to Lumina…</string>
+    <string name="lumina_loading_wechat_article">Loading WeChat article…</string>
+    <string name="lumina_uploading_content">Uploading article content…</string>
+    <string name="lumina_extract_failed">Failed to extract article content</string>
+    <string name="lumina_confirm_sync">Sync this article to Lumina?</string>
+    <string name="lumina_confirm_sync_url">Sync this link to Lumina?\n\n%1$s</string>
     <string name="open_url">Open url</string>
     <string name="add_folder">Add folder</string>
     <string name="feed_name">Feed name</string>

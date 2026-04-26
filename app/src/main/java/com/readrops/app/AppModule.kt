@@ -18,6 +18,9 @@ import com.readrops.app.feeds.FeedScreenModel
 import com.readrops.app.feeds.color.FeedColorScreenModel
 import com.readrops.app.feeds.newfeed.NewFeedScreenModel
 import com.readrops.app.item.ItemScreenModel
+import com.readrops.app.lumina.LuminaConfig
+import com.readrops.app.lumina.LuminaExternalShareHandler
+import com.readrops.app.lumina.LuminaShareRepository
 import com.readrops.app.more.preferences.PreferencesScreenModel
 import com.readrops.app.notifications.NotificationsScreenModel
 import com.readrops.app.repositories.BaseRepository
@@ -44,7 +47,7 @@ import org.koin.dsl.module
 
 val appModule = module {
 
-    factory { TimelineScreenModel(get(), get(), get(), androidContext()) }
+    factory { TimelineScreenModel(get(), get(), get(), get(), androidContext()) }
 
     factory { FeedScreenModel(get(), get(), androidContext()) }
 
@@ -60,7 +63,8 @@ val appModule = module {
             itemIndex = itemIndex,
             queryFilters = queryFilters,
             database = get(),
-            preferences = get()
+            preferences = get(),
+            luminaShareRepository = get()
         )
     }
 
@@ -129,6 +133,12 @@ val appModule = module {
     single { DataStorePreferences(get()) }
 
     single { Preferences(get()) }
+
+    single { LuminaConfig(get(), get()) }
+
+    single { LuminaShareRepository(get()) }
+
+    single { LuminaExternalShareHandler(get()) }
 
     single { NotificationManagerCompat.from(get()) }
 

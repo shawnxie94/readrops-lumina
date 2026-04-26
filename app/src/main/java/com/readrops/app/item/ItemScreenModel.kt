@@ -25,6 +25,8 @@ import coil3.request.ImageRequest
 import coil3.request.allowHardware
 import coil3.toBitmap
 import com.readrops.app.R
+import com.readrops.app.lumina.LuminaShareRepository
+import com.readrops.app.lumina.LuminaShareResult
 import com.readrops.app.repositories.BaseRepository
 import com.readrops.app.util.PAGING_PAGE_SIZE
 import com.readrops.app.util.PAGING_PREFETCH_DISTANCE
@@ -64,6 +66,7 @@ class ItemScreenModel(
     private val queryFilters: QueryFilters,
     private val database: Database,
     private val preferences: Preferences,
+    private val luminaShareRepository: LuminaShareRepository,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StateScreenModel<ItemState>(ItemState()), KoinComponent {
 
@@ -362,6 +365,10 @@ class ItemScreenModel(
     fun shareItem(itemWithFeed: ItemWithFeed, context: Context) = Utils.shareItem(
         itemWithFeed, context, useCustomShareIntentTpl.value, customShareIntentTpl.value
     )
+
+    suspend fun syncItemToLumina(itemWithFeed: ItemWithFeed): LuminaShareResult {
+        return luminaShareRepository.syncUrl(itemWithFeed.item.link)
+    }
 
     @OptIn(DelicateCoroutinesApi::class)
     override fun onDispose() {

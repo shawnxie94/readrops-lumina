@@ -32,6 +32,7 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import com.readrops.app.account.selection.AccountSelectionScreen
 import com.readrops.app.account.selection.AccountSelectionScreenModel
 import com.readrops.app.home.HomeScreen
+import com.readrops.app.lumina.LuminaExternalShareHandler
 import com.readrops.app.repositories.BaseRepository
 import com.readrops.app.sync.SyncWorker
 import com.readrops.app.timelime.TimelineTab
@@ -128,6 +129,7 @@ class MainActivity : ComponentActivity(), KoinComponent {
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
+        setIntent(intent)
 
         lifecycleScope.launch {
             handleIntent(intent)
@@ -158,7 +160,8 @@ class MainActivity : ComponentActivity(), KoinComponent {
             }
 
             intent.action != null && intent.action == Intent.ACTION_SEND -> {
-                HomeScreen.openAddFeedDialog(intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty())
+                get<LuminaExternalShareHandler>()
+                    .handle(this@MainActivity, intent.getStringExtra(Intent.EXTRA_TEXT).orEmpty())
             }
         }
     }

@@ -11,6 +11,8 @@ import androidx.work.workDataOf
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.readrops.app.R
 import com.readrops.app.home.TabScreenModel
+import com.readrops.app.lumina.LuminaShareRepository
+import com.readrops.app.lumina.LuminaShareResult
 import com.readrops.app.repositories.ErrorResult
 import com.readrops.app.repositories.GetFoldersWithFeeds
 import com.readrops.app.sync.SyncWorker
@@ -60,6 +62,7 @@ class TimelineScreenModel(
     private val database: Database,
     private val getFoldersWithFeeds: GetFoldersWithFeeds,
     private val preferences: Preferences,
+    private val luminaShareRepository: LuminaShareRepository,
     private val context: Context,
     private val dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : TabScreenModel(database, context) {
@@ -495,6 +498,10 @@ class TimelineScreenModel(
     fun shareItem(itemWithFeed: ItemWithFeed, context: Context) = Utils.shareItem(
         itemWithFeed, context, useCustomShareIntentTpl.value, customShareIntentTpl.value
     )
+
+    suspend fun syncItemToLumina(itemWithFeed: ItemWithFeed): LuminaShareResult {
+        return luminaShareRepository.syncUrl(itemWithFeed.item.link)
+    }
 }
 
 @Stable

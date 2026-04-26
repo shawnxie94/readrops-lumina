@@ -1,18 +1,14 @@
 package com.readrops.app.more.preferences
 
-import android.content.ClipData
 import android.content.Context
-import androidx.room.ColumnInfo
-import androidx.room.Embedded
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import com.readrops.app.R
+import com.readrops.app.lumina.LuminaConfig
 import com.readrops.app.util.Preference
 import com.readrops.app.util.Preferences
-import com.readrops.db.Database
 import com.readrops.db.entities.Item
 import com.readrops.db.pojo.ItemWithFeed
-import com.readrops.db.queries.ItemSelectionQueryBuilder
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.combine
@@ -22,9 +18,9 @@ import kotlinx.coroutines.launch
 typealias PreferenceState<T> = Pair<T, Preference<T>>
 
 class PreferencesScreenModel(
-    database: Database,
     context: Context,
     preferences: Preferences,
+    private val luminaConfig: LuminaConfig,
     dispatcher: CoroutineDispatcher = Dispatchers.IO
 ) : StateScreenModel<PreferencesScreenState>(PreferencesScreenState.Loading) {
     init {
@@ -41,6 +37,8 @@ class PreferencesScreenModel(
                     synchAtLaunch.flow,
                     useCustomShareIntentTpl.flow,
                     customShareIntentTpl.flow,
+                    luminaApiUrl.flow,
+                    luminaSkipAiProcessing.flow,
                     swipeToLeft.flow,
                     swipeToRight.flow,
                 )
@@ -59,8 +57,11 @@ class PreferencesScreenModel(
                         syncAtLaunchPref = (list[7] as Boolean) to synchAtLaunch,
                         useCustomShareIntentTpl = (list[8] as Boolean) to useCustomShareIntentTpl,
                         customShareIntentTpl = (list[9] as String) to customShareIntentTpl,
-                        swipeToLeft = (list[10] as String) to swipeToLeft,
-                        swipeToRight = (list[11] as String) to swipeToRight,
+                        luminaApiUrl = list[10] as String,
+                        luminaInternalToken = luminaConfig.getInternalToken(),
+                        luminaSkipAiProcessing = list[11] as Boolean,
+                        swipeToLeft = (list[12] as String) to swipeToLeft,
+                        swipeToRight = (list[13] as String) to swipeToRight,
                         exampleItem = ItemWithFeed(
                             item = Item(
                                 title = context.getString(R.string.example_item_title),
@@ -80,7 +81,10 @@ class PreferencesScreenModel(
                 }.collect { theme ->
                     mutableState.update { previous ->
                         (previous as? PreferencesScreenState.Loaded)?.let {
-                            theme.copy(showDialog = previous.showDialog)
+                            theme.copy(
+                                showDialog = previous.showDialog,
+                                showLuminaDialog = previous.showLuminaDialog
+                            )
                         } ?: theme
                     }
                 }
@@ -95,6 +99,27 @@ class PreferencesScreenModel(
                     showDialog = isVisible
                 )
             }
+        }
+    }
+
+    fun updateLuminaDialog(isVisible: Boolean) {
+        if (mutableState.value is PreferencesScreenState.Loaded) {
+            mutableState.update {
+                (mutableState.value as PreferencesScreenState.Loaded).copy(
+                    showLuminaDialog = isVisible
+                )
+            }
+        }
+    }
+
+    fun saveLuminaSettings(
+        apiUrl: String,
+        internalToken: String,
+        skipAiProcessing: Boolean
+    ) {
+        screenModelScope.launch {
+            luminaConfig.saveSettings(apiUrl, internalToken, skipAiProcessing)
+            updateLuminaDialog(false)
         }
     }
 }
@@ -114,10 +139,14 @@ sealed class PreferencesScreenState {
         val syncAtLaunchPref: PreferenceState<Boolean>,
         val useCustomShareIntentTpl: PreferenceState<Boolean>,
         val customShareIntentTpl: PreferenceState<String>,
+        val luminaApiUrl: String,
+        val luminaInternalToken: String,
+        val luminaSkipAiProcessing: Boolean,
         val swipeToLeft: PreferenceState<String>,
         val swipeToRight: PreferenceState<String>,
         val exampleItem: ItemWithFeed,
-        val showDialog: Boolean = false
+        val showDialog: Boolean = false,
+        val showLuminaDialog: Boolean = false
     ) : PreferencesScreenState()
 
 }

@@ -30,7 +30,10 @@ import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -51,6 +54,8 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.readrops.app.MainActivity
 import com.readrops.app.R
 import com.readrops.app.item.ItemScreen
+import com.readrops.app.lumina.message
+import com.readrops.app.share.ShareArticleDialog
 import com.readrops.app.timelime.components.TimelineAppBar
 import com.readrops.app.timelime.components.TimelineItem
 import com.readrops.app.timelime.components.TimelineItemSize
@@ -71,6 +76,7 @@ import com.readrops.db.pojo.ItemWithFeed
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.filter
 import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.launch
 
 
 object TimelineTab : Tab {
@@ -98,8 +104,10 @@ object TimelineTab : Tab {
 
         val lazyListState = rememberLazyListState()
         val snackbarHostState = remember { SnackbarHostState() }
+        val coroutineScope = rememberCoroutineScope()
         val topAppBarState = rememberTopAppBarState()
         val topAppBarScrollBehavior = TopAppBarDefaults.pinnedScrollBehavior(topAppBarState)
+        var itemToShare by remember { mutableStateOf<ItemWithFeed?>(null) }
 
         val lazyColumnPadding = if (preferences.itemSize == TimelineItemSize.COMPACT) {
             0.dp
@@ -240,6 +248,24 @@ object TimelineTab : Tab {
             }
         )
 
+        itemToShare?.let { itemWithFeed ->
+            ShareArticleDialog(
+                onDismiss = { itemToShare = null },
+                onShareToOtherApps = {
+                    screenModel.shareItem(itemWithFeed, context)
+                    itemToShare = null
+                },
+                onSyncToLumina = {
+                    itemToShare = null
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            screenModel.syncItemToLumina(itemWithFeed).message(context)
+                        )
+                    }
+                }
+            )
+        }
+
         TimelineDrawer(
             state = state,
             drawerState = drawerState,
@@ -348,7 +374,7 @@ object TimelineTab : Tab {
                                                         screenModel.updateStarState(itemWithFeed.item)
                                                     },
                                                     onShare = {
-                                                        screenModel.shareItem(itemWithFeed, context)
+                                                        itemToShare = itemWithFeed
                                                     },
                                                     onSetReadState = {
                                                         screenModel.updateItemReadState(itemWithFeed.item)

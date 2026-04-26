@@ -122,6 +122,18 @@ class Preferences(
         default = ""
     )
 
+    val luminaApiUrl = Preference(
+        dataStore = dataStore,
+        key = stringPreferencesKey("lumina_api_url"),
+        default = ""
+    )
+
+    val luminaSkipAiProcessing = Preference(
+        dataStore = dataStore,
+        key = booleanPreferencesKey("lumina_skip_ai_processing"),
+        default = false
+    )
+
     val swipeToRight = Preference(
         dataStore = dataStore,
         key = stringPreferencesKey("swipe_to_right"),

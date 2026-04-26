@@ -41,13 +41,23 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <intent-filter android:label="@string/add_feed">
+            <intent-filter android:label="@string/sync_to_lumina">
                 <action android:name="android.intent.action.SEND" />
                 <category android:name="android.intent.category.DEFAULT" />
 
                 <data android:mimeType="text/plain" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".lumina.LuminaExternalShareConfirmActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Readrops" />
+
+        <activity
+            android:name=".lumina.LuminaWebArticleActivity"
+            android:exported="false"
+            android:theme="@style/Theme.Readrops" />
 
         <activity
             android:name=".util.CrashActivity"

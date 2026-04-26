@@ -46,9 +46,12 @@ object Utils {
         useCustomShareIntentTpl: Boolean,
         customShareIntentTpl: String
     ) {
-        val intentContent =
-            if(!useCustomShareIntentTpl || customShareIntentTpl.isBlank()) itemWithFeed.item.link
-            else ShareIntentTextRenderer(itemWithFeed).render(customShareIntentTpl)
+        val intentContent = getShareIntentText(
+            itemWithFeed = itemWithFeed,
+            useCustomShareIntentTpl = useCustomShareIntentTpl,
+            customShareIntentTpl = customShareIntentTpl
+        )
+
         Intent().apply {
             action = Intent.ACTION_SEND
             type = "text/plain"
@@ -56,6 +59,18 @@ object Utils {
             flags = Intent.FLAG_GRANT_READ_URI_PERMISSION
         }.also {
             context.startActivity(Intent.createChooser(it, null))
+        }
+    }
+
+    fun getShareIntentText(
+        itemWithFeed: ItemWithFeed,
+        useCustomShareIntentTpl: Boolean,
+        customShareIntentTpl: String
+    ): String? {
+        return if (!useCustomShareIntentTpl || customShareIntentTpl.isBlank()) {
+            itemWithFeed.item.link
+        } else {
+            ShareIntentTextRenderer(itemWithFeed).render(customShareIntentTpl)
         }
     }
 

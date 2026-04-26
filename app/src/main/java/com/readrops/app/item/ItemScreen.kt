@@ -7,7 +7,10 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -20,6 +23,8 @@ import cafe.adriel.voyager.koin.koinScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.readrops.app.R
+import com.readrops.app.lumina.message
+import com.readrops.app.share.ShareArticleDialog
 import com.readrops.app.util.components.AndroidScreen
 import com.readrops.app.util.components.CenteredProgressIndicator
 import com.readrops.app.util.components.Placeholder
@@ -29,7 +34,9 @@ import com.readrops.app.util.extensions.isNotEmpty
 import com.readrops.app.util.extensions.openInCustomTab
 import com.readrops.app.util.extensions.openUrl
 import com.readrops.db.filters.QueryFilters
+import com.readrops.db.pojo.ItemWithFeed
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.launch
 import org.koin.core.parameter.parametersOf
 
 class ItemScreen(
@@ -49,6 +56,8 @@ class ItemScreen(
         val items = screenModel.itemState.collectAsLazyPagingItems()
 
         val snackbarHostState = remember { SnackbarHostState() }
+        val coroutineScope = rememberCoroutineScope()
+        var itemToShare by remember { mutableStateOf<ItemWithFeed?>(null) }
 
         if (state.imageDialogUrl != null) {
             ItemImageDialog(
@@ -75,6 +84,24 @@ class ItemScreen(
             if (state.error != null) {
                 snackbarHostState.showSnackbar(state.error!!)
             }
+        }
+
+        itemToShare?.let { itemWithFeed ->
+            ShareArticleDialog(
+                onDismiss = { itemToShare = null },
+                onShareToOtherApps = {
+                    screenModel.shareItem(itemWithFeed, context)
+                    itemToShare = null
+                },
+                onSyncToLumina = {
+                    itemToShare = null
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            screenModel.syncItemToLumina(itemWithFeed).message(context)
+                        )
+                    }
+                }
+            )
         }
 
         when {
@@ -133,7 +160,7 @@ class ItemScreen(
                                     context.openInCustomTab(url, state.theme, accentColor)
                                 }
                             },
-                            onShareItem = { screenModel.shareItem(itemWithFeed, context) },
+                            onShareItem = { itemToShare = itemWithFeed },
                             onSetReadState = { screenModel.setItemReadState(item) },
                             onSetStarState = { screenModel.setItemStarState(item) },
                             onOpenImageDialog = { screenModel.openImageDialog(it) },
