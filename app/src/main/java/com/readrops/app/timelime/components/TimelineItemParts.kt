@@ -21,6 +21,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -33,6 +34,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -40,6 +43,7 @@ import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.readrops.app.R
 import com.readrops.app.item.components.TagSurface
+import com.readrops.app.item.view.ItemTextFormatter
 import com.readrops.app.util.components.FeedIcon
 import com.readrops.app.util.extensions.canDisplayOnBackground
 import com.readrops.app.util.extensions.displayColor
@@ -160,8 +164,9 @@ fun LargeTimelineItem(
     modifier: Modifier = Modifier
 ) {
     val displayColor = itemWithFeed.displayColor(CardDefaults.cardColors().containerColor.toArgb())
+    val itemDescription = itemWithFeed.item.description ?: itemWithFeed.item.cleanDescription
 
-    if (itemWithFeed.item.cleanDescription == null && !itemWithFeed.item.hasImage) {
+    if (itemDescription == null && !itemWithFeed.item.hasImage) {
         RegularTimelineItem(
             itemWithFeed = itemWithFeed,
             onClick = onClick,
@@ -203,15 +208,10 @@ fun LargeTimelineItem(
 
                     TimelineItemTitle(title = itemWithFeed.item.title!!)
 
-                    if (itemWithFeed.item.cleanDescription != null) {
+                    if (itemDescription != null) {
                         ShortSpacer()
 
-                        Text(
-                            text = itemWithFeed.item.cleanDescription!!,
-                            style = MaterialTheme.typography.bodyMedium,
-                            maxLines = 3,
-                            overflow = TextOverflow.Ellipsis,
-                        )
+                        TimelineItemDescription(description = itemDescription)
                     }
 
                     if (itemWithFeed.item.tags.isNotEmpty()) {
@@ -255,6 +255,22 @@ fun LargeTimelineItem(
         }
     }
 
+}
+
+@Composable
+fun TimelineItemDescription(
+    description: String
+) {
+    val text = remember(description) {
+        AnnotatedString.fromHtml(ItemTextFormatter.formatPreviewText(description))
+    }
+
+    Text(
+        text = text,
+        style = MaterialTheme.typography.bodyMedium,
+        maxLines = 3,
+        overflow = TextOverflow.Ellipsis,
+    )
 }
 
 @Composable

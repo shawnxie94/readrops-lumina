@@ -93,6 +93,8 @@ jdk-desugar = "com.android.tools:desugar_jdk_libs_nio:2.1.5"
 
 jsoup = "org.jsoup:jsoup:1.20.1"
 moshi = "com.squareup.moshi:moshi:1.15.1"
+commonmark = "org.commonmark:commonmark:0.24.0"
+commonmark-gfm-tables = "org.commonmark:commonmark-ext-gfm-tables:0.24.0"
 
 template = "io.pebbletemplates:pebble:3.2.2"
 slf4j-android = "org.slf4j:slf4j-android:1.7.36"

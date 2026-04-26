@@ -13,6 +13,22 @@ val props = Properties().apply {
         load(FileInputStream(rootProject.file("local.properties")))
     }
 }
+val coverageEnabled = providers.gradleProperty("enableCoverage").orNull == "true" ||
+        System.getenv("CI") == "true"
+
+fun commandOutput(vararg command: String): String? = runCatching {
+    providers.exec {
+        commandLine(*command)
+    }.standardOutput.asText.get().trim().takeIf { it.isNotBlank() }
+}.getOrNull()
+
+fun tagVersionName(): String {
+    val githubTag = System.getenv("GITHUB_REF_NAME")
+        ?.takeIf { System.getenv("GITHUB_REF_TYPE") == "tag" }
+
+    val tag = githubTag ?: commandOutput("git", "describe", "--tags", "--exact-match")
+    return tag?.removePrefix("v") ?: "0.0.0-dev"
+}
 
 
 android {
@@ -22,7 +38,7 @@ android {
         applicationId = "com.readrops.app"
 
         versionCode = 22
-        versionName = "2.1.1"
+        versionName = tagVersionName()
 
         testInstrumentationRunner = "com.readrops.app.ReadropsTestRunner"
     }
@@ -43,8 +59,8 @@ android {
             isShrinkResources = false
 
             applicationIdSuffix = ".debug"
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = coverageEnabled
+            enableAndroidTestCoverage = coverageEnabled
 
             proguardFiles(getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro")
         }
@@ -120,6 +136,8 @@ dependencies {
 
     implementation(libs.aboutlibraries.composem3)
     implementation(libs.jsoup)
+    implementation(libs.commonmark)
+    implementation(libs.commonmark.gfm.tables)
     implementation(libs.colorpicker)
 
     implementation(libs.autofill)

@@ -73,7 +73,7 @@
     <string name="filter_oldest">Oldest to newest</string> <!-- keep for new filter -->
     <string name="login_failed">Login failed. Please check your credentials</string>
     <string name="new_account">New account</string>
-    <string name="app_url" translatable="false">https://github.com/readrops/Readrops</string>
+    <string name="app_url" translatable="false">https://github.com/shawnxie94/readrops-lumina</string>
     <string name="local">Local</string>
     <string name="delete">Delete</string>
     <string name="app_licence">App released under the GPLv3 licence</string>
@@ -195,7 +195,9 @@
     <string name="litecoin_address" translatable="false">MTuf45ZvxhMWWo4v8YBbFDTLsFcGtpcPNT</string>
     <string name="bitcoin_copy_address">Bitcoin (copy address)</string>
     <string name="litecoin_copy_address">Litecoin (copy address)</string>
-    <string name="donation_text">I you find my work useful and you would like to support me, you can consider making me a donation.</string>
+    <string name="donation_text">Scan this QR code if you would like to support this project.</string>
+    <string name="donation_qr_hint">Tap to enlarge. Long press to save.</string>
+    <string name="donation_qr_saved">QR code saved.</string>
     <string name="downloaded_file">Downloaded file!</string>
     <string name="provide_full_url">Please provide the full API URL</string>
     <string name="provide_root_url">Please provide the service root URL</string>

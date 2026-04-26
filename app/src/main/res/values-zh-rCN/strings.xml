@@ -134,7 +134,9 @@
     <string name="copied">已复制！</string>
     <string name="bitcoin_copy_address">比特币（复制地址）</string>
     <string name="litecoin_copy_address">莱特币（复制地址）</string>
-    <string name="donation_text">如果您发现我的工作很有用并且愿意支持我，您可以考虑向我捐款。</string>
+    <string name="donation_text">如果你愿意支持这个项目，可以扫描下方收款码。</string>
+    <string name="donation_qr_hint">点击放大，长按保存。</string>
+    <string name="donation_qr_saved">收款码已保存。</string>
     <string name="provide_full_url">请提供完整的 API URL</string>
     <string name="provide_root_url">请提供服务根 URL</string>
     <string name="identifier">标识符</string>

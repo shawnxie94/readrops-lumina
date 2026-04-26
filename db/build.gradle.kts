@@ -4,13 +4,16 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+val coverageEnabled = providers.gradleProperty("enableCoverage").orNull == "true" ||
+        System.getenv("CI") == "true"
+
 android {
     namespace = "com.readrops.db"
 
     buildTypes {
         debug {
-            enableUnitTestCoverage = true
-            enableAndroidTestCoverage = true
+            enableUnitTestCoverage = coverageEnabled
+            enableAndroidTestCoverage = coverageEnabled
         }
 
         create("beta") {

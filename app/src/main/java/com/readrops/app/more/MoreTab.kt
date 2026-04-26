@@ -126,24 +126,6 @@ object MoreTab : Tab, KoinComponent {
                         )
                     }
 
-                    IconButton(
-                        onClick = { context.openUrl(context.getString(R.string.changelog_url)) }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_changelog),
-                            contentDescription = null,
-                            modifier = Modifier.size(24.dp)
-                        )
-                    }
-
-                    IconButton(
-                        onClick = { context.openUrl(context.getString(R.string.app_issues_url)) }
-                    ) {
-                        Icon(
-                            painter = painterResource(id = R.drawable.ic_bug_report),
-                            contentDescription = null
-                        )
-                    }
                 }
 
                 MediumSpacer()

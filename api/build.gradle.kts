@@ -3,12 +3,15 @@ plugins {
     kotlin("android")
 }
 
+val coverageEnabled = providers.gradleProperty("enableCoverage").orNull == "true" ||
+        System.getenv("CI") == "true"
+
 android {
     namespace = "com.readrops.api"
 
     buildTypes {
         debug {
-            enableUnitTestCoverage = true
+            enableUnitTestCoverage = coverageEnabled
         }
 
         create("beta") {
