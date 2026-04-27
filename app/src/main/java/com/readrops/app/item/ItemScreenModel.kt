@@ -370,6 +370,10 @@ class ItemScreenModel(
         return luminaShareRepository.syncUrl(itemWithFeed.item.link)
     }
 
+    suspend fun syncItemContentToLumina(itemWithFeed: ItemWithFeed): LuminaShareResult {
+        return luminaShareRepository.syncItemContent(itemWithFeed)
+    }
+
     @OptIn(DelicateCoroutinesApi::class)
     override fun onDispose() {
         // Use GlobalScope instead of NonCancellable

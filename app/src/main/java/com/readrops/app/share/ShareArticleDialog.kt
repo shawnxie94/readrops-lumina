@@ -18,9 +18,10 @@ import com.readrops.app.R
 fun ShareArticleDialog(
     onDismiss: () -> Unit,
     onShareToOtherApps: () -> Unit,
-    onSyncToLumina: () -> Unit
+    onSyncLinkToLumina: () -> Unit,
+    onSyncFullTextToLumina: () -> Unit
 ) {
-    var showSyncConfirmation by remember { mutableStateOf(false) }
+    var pendingLuminaSync by remember { mutableStateOf<LuminaSyncMode?>(null) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -36,9 +37,15 @@ fun ShareArticleDialog(
                 }
 
                 TextButton(
-                    onClick = { showSyncConfirmation = true }
+                    onClick = { pendingLuminaSync = LuminaSyncMode.LINK }
                 ) {
-                    Text(text = stringResource(R.string.sync_to_lumina))
+                    Text(text = stringResource(R.string.sync_to_lumina_link))
+                }
+
+                TextButton(
+                    onClick = { pendingLuminaSync = LuminaSyncMode.FULL_TEXT }
+                ) {
+                    Text(text = stringResource(R.string.sync_to_lumina_full_text))
                 }
             }
         },
@@ -49,26 +56,43 @@ fun ShareArticleDialog(
         }
     )
 
-    if (showSyncConfirmation) {
+    pendingLuminaSync?.let { syncMode ->
         AlertDialog(
-            onDismissRequest = { showSyncConfirmation = false },
-            title = { Text(text = stringResource(R.string.sync_to_lumina)) },
-            text = { Text(text = stringResource(R.string.lumina_confirm_sync)) },
+            onDismissRequest = { pendingLuminaSync = null },
+            title = { Text(text = stringResource(syncMode.titleRes)) },
+            text = { Text(text = stringResource(syncMode.confirmationRes)) },
             confirmButton = {
                 TextButton(
                     onClick = {
-                        showSyncConfirmation = false
-                        onSyncToLumina()
+                        pendingLuminaSync = null
+                        when (syncMode) {
+                            LuminaSyncMode.LINK -> onSyncLinkToLumina()
+                            LuminaSyncMode.FULL_TEXT -> onSyncFullTextToLumina()
+                        }
                     }
                 ) {
-                    Text(text = stringResource(R.string.sync_to_lumina))
+                    Text(text = stringResource(syncMode.titleRes))
                 }
             },
             dismissButton = {
-                TextButton(onClick = { showSyncConfirmation = false }) {
+                TextButton(onClick = { pendingLuminaSync = null }) {
                     Text(text = stringResource(R.string.back))
                 }
             }
         )
     }
+}
+
+private enum class LuminaSyncMode(
+    val titleRes: Int,
+    val confirmationRes: Int
+) {
+    LINK(
+        R.string.sync_to_lumina_link,
+        R.string.lumina_confirm_sync_link
+    ),
+    FULL_TEXT(
+        R.string.sync_to_lumina_full_text,
+        R.string.lumina_confirm_sync_full_text
+    )
 }

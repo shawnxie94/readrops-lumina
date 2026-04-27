@@ -13,6 +13,8 @@
     <string name="share_article">分享文章</string>
     <string name="share_to_other_apps">分享到其他应用</string>
     <string name="sync_to_lumina">同步到 Lumina</string>
+    <string name="sync_to_lumina_link">同步到 Lumina（仅链接）</string>
+    <string name="sync_to_lumina_full_text">同步到 Lumina（全文）</string>
     <string name="synced_to_lumina">已同步到 Lumina</string>
     <string name="already_exists_in_lumina">Lumina 中已存在</string>
     <string name="lumina_not_configured">尚未配置 Lumina</string>
@@ -28,6 +30,8 @@
     <string name="lumina_uploading_content">正在上传文章内容…</string>
     <string name="lumina_extract_failed">未能提取文章内容</string>
     <string name="lumina_confirm_sync">确认同步这篇文章到 Lumina？</string>
+    <string name="lumina_confirm_sync_link">确认只同步这篇文章的链接到 Lumina？</string>
+    <string name="lumina_confirm_sync_full_text">确认同步这篇文章的全文到 Lumina？</string>
     <string name="lumina_confirm_sync_url">确认同步这个链接到 Lumina？\n\n%1$s</string>
     <string name="open_url">打开 URL</string>
     <string name="add_folder">添加文件夹</string>

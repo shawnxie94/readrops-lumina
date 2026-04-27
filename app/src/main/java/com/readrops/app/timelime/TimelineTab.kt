@@ -255,11 +255,19 @@ object TimelineTab : Tab {
                     screenModel.shareItem(itemWithFeed, context)
                     itemToShare = null
                 },
-                onSyncToLumina = {
+                onSyncLinkToLumina = {
                     itemToShare = null
                     coroutineScope.launch {
                         snackbarHostState.showSnackbar(
                             screenModel.syncItemToLumina(itemWithFeed).message(context)
+                        )
+                    }
+                },
+                onSyncFullTextToLumina = {
+                    itemToShare = null
+                    coroutineScope.launch {
+                        snackbarHostState.showSnackbar(
+                            screenModel.syncItemContentToLumina(itemWithFeed).message(context)
                         )
                     }
                 }

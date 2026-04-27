@@ -130,6 +130,8 @@
     <string name="share_article">分享文章</string>
     <string name="share_to_other_apps">分享到其他應用程式</string>
     <string name="sync_to_lumina">同步到 Lumina</string>
+    <string name="sync_to_lumina_link">同步到 Lumina（僅連結）</string>
+    <string name="sync_to_lumina_full_text">同步到 Lumina（全文）</string>
     <string name="synced_to_lumina">已同步到 Lumina</string>
     <string name="already_exists_in_lumina">Lumina 中已存在</string>
     <string name="lumina_not_configured">尚未設定 Lumina</string>
@@ -145,6 +147,8 @@
     <string name="lumina_uploading_content">正在上傳文章內容…</string>
     <string name="lumina_extract_failed">無法擷取文章內容</string>
     <string name="lumina_confirm_sync">確認同步這篇文章到 Lumina？</string>
+    <string name="lumina_confirm_sync_link">確認只同步這篇文章的連結到 Lumina？</string>
+    <string name="lumina_confirm_sync_full_text">確認同步這篇文章的全文到 Lumina？</string>
     <string name="lumina_confirm_sync_url">確認同步這個連結到 Lumina？\n\n%1$s</string>
     <string name="feed_insertion_network_failed">存取 feed %1$s 時發生網路錯誤</string>
     <string name="feed_insertion_successfull">成功新增 feed %1$s</string>

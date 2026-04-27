@@ -502,6 +502,10 @@ class TimelineScreenModel(
     suspend fun syncItemToLumina(itemWithFeed: ItemWithFeed): LuminaShareResult {
         return luminaShareRepository.syncUrl(itemWithFeed.item.link)
     }
+
+    suspend fun syncItemContentToLumina(itemWithFeed: ItemWithFeed): LuminaShareResult {
+        return luminaShareRepository.syncItemContent(itemWithFeed)
+    }
 }
 
 @Stable

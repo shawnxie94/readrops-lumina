@@ -17,6 +17,8 @@
     <string name="share_article">Share Article</string>
     <string name="share_to_other_apps">Share to other apps</string>
     <string name="sync_to_lumina">Sync to Lumina</string>
+    <string name="sync_to_lumina_link">Sync to Lumina (link only)</string>
+    <string name="sync_to_lumina_full_text">Sync to Lumina (full text)</string>
     <string name="synced_to_lumina">Synced to Lumina</string>
     <string name="already_exists_in_lumina">Already exists in Lumina</string>
     <string name="lumina_not_configured">Lumina is not configured</string>
@@ -32,6 +34,8 @@
     <string name="lumina_uploading_content">Uploading article content…</string>
     <string name="lumina_extract_failed">Failed to extract article content</string>
     <string name="lumina_confirm_sync">Sync this article to Lumina?</string>
+    <string name="lumina_confirm_sync_link">Sync this link to Lumina?</string>
+    <string name="lumina_confirm_sync_full_text">Sync this article content to Lumina?</string>
     <string name="lumina_confirm_sync_url">Sync this link to Lumina?\n\n%1$s</string>
     <string name="open_url">Open url</string>
     <string name="add_folder">Add folder</string>
