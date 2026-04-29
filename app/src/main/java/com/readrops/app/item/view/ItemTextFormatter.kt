@@ -33,7 +33,7 @@ object ItemTextFormatter {
         }
 
         val body = document.body()
-        val isPlainText = body.stream().skip(1).allMatch { !it.tag().isKnownTag }
+        val isPlainText = body.isPlainText()
         val isMarkdown = looksLikeMarkdown(unescapedText) &&
                 (isPlainText || startsWithMarkdownBlock(unescapedText))
 
@@ -48,6 +48,7 @@ object ItemTextFormatter {
             }
         } else {
             body.select("div,span").forEach { it.clearAttributes() }
+            body.renderMarkdownTextNodes()
             body.html()
         }
     }
@@ -56,10 +57,21 @@ object ItemTextFormatter {
         if (text == null) return ""
 
         val unescapedText = unescapeEntities(text, false) ?: text
-        return if (looksLikeMarkdown(unescapedText)) {
-            markdownRenderer.render(markdownParser.parse(unescapedText))
-        } else {
-            "<p>${Entities.escape(unescapedText).replace("\n", "<br>")}</p>"
+        val document = Jsoup.parse(unescapedText)
+        val body = document.body()
+        val isPlainText = body.isPlainText()
+
+        return when {
+            !isPlainText -> {
+                body.select("div,span").forEach { it.clearAttributes() }
+                body.renderMarkdownTextNodes()
+                body.normalizePreviewLists()
+                body.html()
+            }
+
+            looksLikeMarkdown(unescapedText) -> markdownRenderer.render(markdownParser.parse(unescapedText))
+
+            else -> "<p>${Entities.escape(unescapedText).replace("\n", "<br>")}</p>"
         }
     }
 
@@ -102,4 +114,64 @@ object ItemTextFormatter {
         Regex("""\A\s{0,3}[-*_]{3,}\s*$"""),
         Regex("""\A\|.+\|\s*$""")
     )
+
+    private fun org.jsoup.nodes.Element.isPlainText() =
+        stream().skip(1).allMatch { !it.tag().isKnownTag }
+
+    private fun org.jsoup.nodes.Element.renderMarkdownTextNodes() {
+        childNodes()
+            .flatMap { it.markdownTextNodes() }
+            .filter { textNode ->
+                val text = textNode.text()
+
+                looksLikeMarkdown(text) &&
+                        !text.trimStart().startsWith("- ") &&
+                        !textNode.hasParentTag("a", "code", "pre", "script", "style")
+            }
+            .forEach { textNode ->
+                val markdownHtml = markdownRenderer.render(markdownParser.parse(textNode.text()))
+                val fragment = Jsoup.parseBodyFragment(markdownHtml)
+                val markdownNodes = fragment.body().children().singleOrNull { it.tagName() == "p" }
+                    ?.childNodes()
+                    ?: fragment.body().childNodes()
+
+                textNode.after(markdownNodes.joinToString("") { it.outerHtml() })
+                textNode.remove()
+            }
+    }
+
+    private fun org.jsoup.nodes.Element.normalizePreviewLists() {
+        select("ul,ol").forEach { list ->
+            val isOrderedList = list.tagName() == "ol"
+            val paragraphs = list.children()
+                .filter { it.tagName() == "li" }
+                .mapIndexed { index, item ->
+                    val prefix = if (isOrderedList) "${index + 1}. " else "• "
+                    val itemHtml = item.childNodes().joinToString("") { it.outerHtml() }
+
+                    "<p>$prefix$itemHtml</p>"
+                }
+                .joinToString("")
+
+            list.after(paragraphs)
+            list.remove()
+        }
+    }
+
+    private fun org.jsoup.nodes.Node.markdownTextNodes(): List<org.jsoup.nodes.TextNode> {
+        if (this is org.jsoup.nodes.TextNode) return listOf(this)
+        return childNodes().flatMap { it.markdownTextNodes() }
+    }
+
+    private fun org.jsoup.nodes.Node.hasParentTag(vararg tagNames: String): Boolean {
+        val excludedTagNames = tagNames.toSet()
+        var parent = parent()
+
+        while (parent != null) {
+            if (parent is org.jsoup.nodes.Element && parent.tagName() in excludedTagNames) return true
+            parent = parent.parent()
+        }
+
+        return false
+    }
 }

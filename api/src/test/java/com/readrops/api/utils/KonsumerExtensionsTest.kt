@@ -3,6 +3,7 @@ package com.readrops.api.utils
 import com.gitlab.mvysny.konsumexml.KonsumerException
 import com.gitlab.mvysny.konsumexml.konsumeXml
 import com.readrops.api.utils.extensions.nonNullText
+import com.readrops.api.utils.extensions.nullableInnerXml
 import com.readrops.api.utils.extensions.nullableText
 import com.readrops.api.utils.extensions.nullableTextRecursively
 import junit.framework.TestCase.assertEquals
@@ -88,6 +89,35 @@ descrip<a>tion</a>
         xml.konsumeXml().apply {
             val description = child("description") { nullableTextRecursively() }
             assertEquals("description\n  description", description)
+        }
+    }
+
+    @Test
+    fun nullableInnerXmlPreservesChildMarkupTest() {
+        val xml = """
+            <description><p><strong>Related articles:</strong></p><ul><li><a href="https://example.org/article">Example</a> - Source</li></ul></description>
+        """.trimIndent()
+
+        xml.konsumeXml().apply {
+            val description = child("description") { nullableInnerXml() }
+
+            assertEquals(
+                """<p><strong>Related articles:</strong></p><ul><li><a href="https://example.org/article">Example</a> - Source</li></ul>""",
+                description
+            )
+        }
+    }
+
+    @Test
+    fun nullableInnerXmlKeepsCDataHtmlTest() {
+        val xml = """
+            <description><![CDATA[<a href="https://example.org/article">Example</a>]]></description>
+        """.trimIndent()
+
+        xml.konsumeXml().apply {
+            val description = child("description") { nullableInnerXml() }
+
+            assertEquals("""<a href="https://example.org/article">Example</a>""", description)
         }
     }
 }

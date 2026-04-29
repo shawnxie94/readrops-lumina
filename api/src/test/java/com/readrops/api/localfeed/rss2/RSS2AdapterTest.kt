@@ -42,6 +42,30 @@ class RSS2AdapterTest {
         }
     }
 
+    @Test
+    fun embeddedHtmlDescriptionTest() {
+        val xml = """
+            <rss version="2.0">
+              <channel>
+                <title>Feed</title>
+                <link>https://example.org</link>
+                <description>Feed description</description>
+                <item>
+                  <title>Item</title>
+                  <link>https://example.org/item</link>
+                  <description><p><strong>相关文章：</strong></p><ul><li><a href="https://example.org/related">Related</a> - Source</li></ul></description>
+                </item>
+              </channel>
+            </rss>
+        """.trimIndent()
+
+        val item = adapter.fromXml(xml.byteInputStream().konsumeXml()).second.first()
+
+        assertEquals(
+            """<p><strong>相关文章：</strong></p><ul><li><a href="https://example.org/related">Related</a> - Source</li></ul>""",
+            item.description
+        )
+    }
 
     @Test
     fun nullTitleTest() {

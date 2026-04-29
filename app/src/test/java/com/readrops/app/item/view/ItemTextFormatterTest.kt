@@ -36,13 +36,37 @@ class ItemTextFormatterTest {
     }
 
     @Test
-    fun keepsExistingHtmlEvenWithMarkdownLikeText() {
+    fun rendersMarkdownInsideExistingHtmlText() {
+        val html = ItemTextFormatter.formatText(
+            """
+            <p>Article **summary**.</p>
+            <p><strong>Related articles:</strong></p>
+            <ul>
+            <li><a href="https://example.org/article">Example article</a> - Example</li>
+            </ul>
+            """.trimIndent(),
+            null
+        )
+
+        assertTrue(html.contains("<p>Article <strong>summary</strong>.</p>"))
+        assertTrue(html.contains("<p><strong>Related articles:</strong></p>"))
+        assertTrue(html.contains("""<a href="https://example.org/article">Example article</a>"""))
+        assertTrue(html.contains(" - Example"))
+        assertTrue(html.contains("<ul>"))
+        assertFalse(html.contains("**summary**"))
+    }
+
+    @Test
+    fun rendersMarkdownLinksInsideExistingHtmlText() {
         val html = ItemTextFormatter.formatText(
             """<p>Read [docs](https://example.org) today.</p>""",
             null
         )
 
-        assertTrue(html.contains("<p>Read [docs](https://example.org) today.</p>"))
+        assertTrue(html.contains("""href="https://example.org""""))
+        assertTrue(html.contains(">docs</a>"))
+        assertTrue(html.contains(" today."))
+        assertFalse(html.contains("[docs](https://example.org)"))
     }
 
     @Test
@@ -83,6 +107,28 @@ class ItemTextFormatterTest {
         assertTrue(html.contains("<h2>Preview</h2>"))
         assertTrue(html.contains("<strong>One</strong>"))
         assertTrue(html.contains("<li>Two</li>"))
+    }
+
+    @Test
+    fun keepsHtmlPreviewTextAsHtml() {
+        val html = ItemTextFormatter.formatPreviewText(
+            """
+            <p>Article **summary**.</p>
+            <p><strong>Related articles:</strong></p>
+            <ul>
+            <li><a href="https://example.org/article">Example article</a> - Example</li>
+            </ul>
+            """.trimIndent()
+        )
+
+        assertTrue(html.contains("<p>Article <strong>summary</strong>.</p>"))
+        assertTrue(html.contains("<p><strong>Related articles:</strong></p>"))
+        assertTrue(html.contains("• "))
+        assertTrue(html.contains("""<a href="https://example.org/article">Example article</a>"""))
+        assertTrue(html.contains(" - Example"))
+        assertFalse(html.contains("**summary**"))
+        assertFalse(html.contains("<ul>"))
+        assertFalse(html.contains("&lt;p&gt;"))
     }
 
     @Test

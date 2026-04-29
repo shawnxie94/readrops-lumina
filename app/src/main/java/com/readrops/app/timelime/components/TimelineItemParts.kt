@@ -35,9 +35,12 @@ import androidx.compose.ui.platform.LocalInspectionMode
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.fromHtml
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
@@ -261,8 +264,18 @@ fun LargeTimelineItem(
 fun TimelineItemDescription(
     description: String
 ) {
-    val text = remember(description) {
-        AnnotatedString.fromHtml(ItemTextFormatter.formatPreviewText(description))
+    val linkColor = MaterialTheme.colorScheme.primary
+    val linkStyles = TextLinkStyles(
+        style = SpanStyle(
+            color = linkColor,
+            textDecoration = TextDecoration.Underline
+        )
+    )
+    val text = remember(description, linkColor) {
+        AnnotatedString.fromHtml(
+            htmlString = ItemTextFormatter.formatPreviewText(description),
+            linkStyles = linkStyles
+        )
     }
 
     Text(

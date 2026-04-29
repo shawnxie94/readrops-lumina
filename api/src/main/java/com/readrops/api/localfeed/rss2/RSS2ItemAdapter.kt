@@ -9,8 +9,8 @@ import com.readrops.api.localfeed.XmlAdapter.Companion.AUTHORS_MAX
 import com.readrops.api.utils.ApiUtils
 import com.readrops.api.utils.exceptions.ParseException
 import com.readrops.api.utils.extensions.nonNullText
+import com.readrops.api.utils.extensions.nullableInnerXml
 import com.readrops.api.utils.extensions.nullableText
-import com.readrops.api.utils.extensions.nullableTextRecursively
 import com.readrops.db.entities.Item
 import com.readrops.db.entities.Tag
 import com.readrops.db.util.DateUtils
@@ -34,8 +34,8 @@ class RSS2ItemAdapter : XmlAdapter<Item> {
                     "pubDate" -> pubDate = DateUtils.parse(nullableText())
                     "dc:date" -> pubDate = DateUtils.parse(nullableText())
                     "guid" -> remoteId = nullableText()
-                    "description" -> description = nullableTextRecursively()
-                    "content:encoded" -> content = nullableTextRecursively()
+                    "description" -> description = nullableInnerXml()
+                    "content:encoded" -> content = nullableInnerXml()
                     "enclosure" -> RSSMedia.parseMediaContent(this, item = this@apply)
                     "media:content" -> RSSMedia.parseMediaContent(this, item = this@apply)
                     "media:group" -> RSSMedia.parseMediaGroup(this, item = this@apply)

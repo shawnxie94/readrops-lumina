@@ -23,7 +23,10 @@
             src: url("fonts/Inter-Regular.woff2") format("woff2");
         }
 
-        a:link, a:active, a:hover { color: %1$s }
+        a:link, a:visited, a:active, a:hover {
+            color: %1$s;
+            text-decoration: underline;
+        }
 
         * {
             word-wrap: break-word !important;
@@ -56,6 +59,16 @@
 
         h1, p, div {
             margin-top: 0px;
+        }
+
+        ul, ol {
+            margin-top: 0px;
+            margin-bottom: 1em;
+            padding-left: 1.5em;
+        }
+
+        li {
+            margin-bottom: 0.35em;
         }
 
         pre, code {
